@@ -1,0 +1,102 @@
+@use '@/styles/variables.scss' as *;
+
+.card,
+.compactCard {
+  width: 100%;
+  overflow: hidden;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.92;
+    transform: scale(0.99);
+  }
+}
+
+.compactCard {
+  @include scroll-x-item(300rpx);
+  margin-right: $spacing-md;
+}
+
+.image {
+  width: 100%;
+  height: 240rpx;
+  display: block;
+  background: $color-bg-hover;
+}
+
+.compactCard .image {
+  height: 180rpx;
+}
+
+.content {
+  padding: $spacing-md;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-sm;
+}
+
+.title {
+  flex: 1;
+  color: $color-text-primary;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  @include text-ellipsis;
+}
+
+.time {
+  color: $color-primary;
+  font-size: $font-size-xs;
+  white-space: nowrap;
+}
+
+.desc {
+  display: block;
+  margin-top: $spacing-sm;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  @include text-ellipsis-multi(2);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  margin-top: $spacing-md;
+}
+
+.tag {
+  padding: 6rpx 14rpx;
+  color: $color-primary-dark;
+  font-size: $font-size-xs;
+  line-height: 1;
+  white-space: nowrap;
+  background: rgba(45, 171, 115, 0.12);
+  border-radius: $radius-round;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: $spacing-md;
+}
+
+.nutrition {
+  color: $color-warning;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+}
+
+.difficulty {
+  color: $color-text-tertiary;
+  font-size: $font-size-xs;
+}
