@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
-import { useLoad } from '@tarojs/taro';
+import { useLoad, useDidShow } from '@tarojs/taro';
 import { healthProfiles } from '@/data/healthProfiles';
 import { recipes } from '@/data/recipes';
 import { filterRecipesByHealthGroup } from '@/utils/recipeFilters';
+import { consumePendingRecommendGroup } from '@/utils/recommendHandoff';
 import type { HealthGroup } from '@/types/recipe';
 import RecipeCard from '@/components/RecipeCard';
 import SectionHeader from '@/components/SectionHeader';
@@ -12,11 +13,20 @@ import styles from './index.module.scss';
 const Recommend: React.FC = () => {
   const [group, setGroup] = useState<HealthGroup>(healthProfiles[0].id);
 
-  // 支持从详情页 ?group=xxx 跳转自动选中
+  // 支持直接(非 tab)导航时通过 ?group=xxx 自动选中
   useLoad((options) => {
     const incoming = options?.group as HealthGroup | undefined;
     if (incoming && healthProfiles.some((p) => p.id === incoming)) {
       setGroup(incoming);
+    }
+  });
+
+  // 详情页点击人群标签 → switchTab 到本页(tabBar 页无法带 URL query),
+  // 通过一次性 handoff 模块拿到目标人群。
+  useDidShow(() => {
+    const pending = consumePendingRecommendGroup();
+    if (pending && healthProfiles.some((p) => p.id === pending)) {
+      setGroup(pending);
     }
   });
 

@@ -5,6 +5,7 @@ import { recipes } from '@/data/recipes';
 import { healthProfiles } from '@/data/healthProfiles';
 import { findRecipeById } from '@/utils/recipeFilters';
 import { isFavoriteRecipe, toggleFavoriteRecipe } from '@/utils/favorites';
+import { setPendingRecommendGroup } from '@/utils/recommendHandoff';
 import type { HealthGroup } from '@/types/recipe';
 import SectionHeader from '@/components/SectionHeader';
 import styles from './index.module.scss';
@@ -43,7 +44,8 @@ const Detail: React.FC = () => {
   };
 
   const goGroup = (g: HealthGroup) => {
-    Taro.navigateTo({ url: `/pages/recommend/index?group=${g}` });
+    setPendingRecommendGroup(g);
+    Taro.switchTab({ url: '/pages/recommend/index' });
   };
 
   const groupTitle = (g: HealthGroup) =>
