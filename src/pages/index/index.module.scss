@@ -1,68 +1,95 @@
 @use '@/styles/variables.scss' as *;
 
-.container {
+.page {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0 $spacing-lg;
-  background: linear-gradient(180deg, #f0f5ff 0%, $color-bg-page 100%);
+  padding: $spacing-lg $spacing-lg 160rpx;
+  background: $color-bg-page;
+  box-sizing: border-box;
 }
 
-.card {
-  width: 100%;
-  max-width: 600rpx;
-  background: $color-bg-card;
-  border-radius: $radius-lg;
-  padding: 64rpx 32rpx;
-  box-shadow: $shadow-card;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.hero {
+  padding: $spacing-lg 0 $spacing-md;
 }
 
-.logo {
-  font-size: 88rpx;
-  margin-bottom: 32rpx;
-  filter: drop-shadow(0 4rpx 8rpx rgba(0, 0, 0, 0.1));
-}
-
-.welcome {
+.heroTitle {
+  display: block;
   font-size: $font-size-xxl;
   font-weight: $font-weight-bold;
   color: $color-text-primary;
-  margin-bottom: 16rpx;
   line-height: $line-height-tight;
-  text-align: center;
 }
 
-.desc {
+.heroSub {
+  display: block;
+  margin-top: $spacing-xs;
   font-size: $font-size-sm;
   color: $color-text-tertiary;
-  line-height: $line-height-loose;
-  text-align: center;
-  margin-bottom: 48rpx;
 }
 
-.button {
-  width: 100%;
-  height: 96rpx;
-  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
-  border-radius: $radius-button;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all $transition-base;
-
-  &:active {
-    opacity: 0.9;
-    transform: scale(0.98);
-  }
+.ingredientSection {
+  margin-top: $spacing-md;
 }
 
-.buttonText {
-  font-size: $font-size-lg;
+.group {
+  margin-bottom: $spacing-md;
+}
+
+.groupLabel {
+  display: block;
+  margin-bottom: $spacing-sm;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
   font-weight: $font-weight-medium;
-  color: $color-text-white;
+}
+
+.tagScroll {
+  @include scroll-x-container;
+  width: 100%;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 12rpx 28rpx;
+  margin-right: $spacing-sm;
+  background: $color-bg-card;
+  border: 2rpx solid $color-border;
+  border-radius: $radius-round;
+  transition: all $transition-fast;
+}
+
+.tagActive {
+  background: rgba(22, 93, 255, 0.1);
+  border-color: $color-primary;
+}
+
+.tagText {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  white-space: nowrap;
+}
+
+.tagActive .tagText {
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
+.resultSection {
+  margin-top: $spacing-lg;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.empty {
+  padding: $spacing-xl $spacing-lg;
+  text-align: center;
+}
+
+.emptyText {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
 }
