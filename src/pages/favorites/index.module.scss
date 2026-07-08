@@ -1,1 +1,43 @@
 @use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  padding: $spacing-lg $spacing-lg 160rpx;
+  background: $color-bg-page;
+  box-sizing: border-box;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+}
+
+.empty {
+  margin-top: $spacing-xl;
+  padding: $spacing-xl $spacing-lg;
+  text-align: center;
+}
+
+.emptyText {
+  display: block;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-bottom: $spacing-lg;
+}
+
+.emptyBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: $button-height-md;
+  padding: 0 $spacing-xl;
+  background: $color-primary;
+  border-radius: $radius-button;
+}
+
+.emptyBtnText {
+  color: $color-text-white;
+  font-size: $font-size-md;
+}
