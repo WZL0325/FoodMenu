@@ -1,0 +1,8 @@
+export const FAVORITE_STORAGE_KEY = 'healthy_recipe_favorites'
+export const DIETARY_PROFILE_STORAGE_KEY = 'healthy_recipe_dietary_profile'
+export const SHOWAPI_CATEGORY_CACHE_KEY = 'showapi_ingredient_options_v1'
+export const SHOWAPI_RECIPE_CACHE_PREFIX = 'showapi_recipe_v1_'
+export const MEAL_PLAN_STORAGE_KEY = 'healthy_recipe_meal_plan_v1'
+export const SHOPPING_MANUAL_STORAGE_KEY = 'healthy_recipe_shopping_manual_v1'
+export const SHOPPING_CHECKED_STORAGE_KEY = 'healthy_recipe_shopping_checked_v1'
+export const RECIPE_FEEDBACK_STORAGE_KEY = 'healthy_recipe_feedback_v1'

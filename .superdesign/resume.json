@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "projectId": "36bdbfbe-2ae8-4ccc-8ae3-34645e2ef582",
+  "projectTitle": "今天吃啥 · 全站重设计概念",
+  "canvasUrl": "https://superdesign.dev/teams/19eae6ec-631c-4520-97d1-ee804fe49261/projects/36bdbfbe-2ae8-4ccc-8ae3-34645e2ef582",
+  "designDirection": "暖橙食欲风(用户 2026-09-03 指定, 参考竞品截图)。主橙 #ED6A3C, 奶油底 #FAF1E6, 暖黑 #2B2018, 功能浅绿 #E8F3E2/#4C8B5E、浅蓝 #E4F0FA/#4A7FB5。无衬线加粗标题 + 笔触下划线。弃用旧杂志绿纸感。",
+  "designSystem": ".superdesign/design-system.md",
+  "components": {
+    "TabBar": "487b4021-e333-48b6-ae16-89583b57c433",
+    "SectionHeader": "6471b421-4ab1-4fac-a92e-da9aa5cf9609"
+  },
+  "contentAssets": {
+    "recipe-r002-sample": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/36bdbfbe-2ae8-4ccc-8ae3-34645e2ef582/content-assets/recipe-r002-sample/r002.jpg",
+    "recipe-r001-sample": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/36bdbfbe-2ae8-4ccc-8ae3-34645e2ef582/content-assets/recipe-r001-sample/r001.jpg",
+    "recipe-r007-sample": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/36bdbfbe-2ae8-4ccc-8ae3-34645e2ef582/content-assets/recipe-r007-sample/r007.jpg"
+  },
+  "styleReferences": ["df9ac8b2-4a64-44c6-8794-0e8289a936bf", "714d365a-fd78-4306-8ded-cc7588ba49f5"],
+  "targets": [
+    {
+      "route": "pages/index/index",
+      "note": "首页。旧杂志风基线 d43d4220 + 分支 9ea051bd/6a4d4bf1 保留在画布仅作对比; 暖橙概念 A(食欲 hero) 为当前主方向",
+      "activeDraftId": "dbecebf8-4e83-4f0f-851f-bf1f3ec166b7",
+      "conceptBDraftId": "0132496a-4404-4b3a-a2f0-79c318462795",
+      "sourceHtml": ".superdesign/tmp/home-concept-a.html",
+      "contextFiles": [".superdesign/design-system.md"]
+    },
+    {
+      "route": "pages/recommend/index",
+      "activeDraftId": "9e3b6791-ab96-49f6-bdd0-b04214c493bf",
+      "sourceHtml": ".superdesign/tmp/recommend.html"
+    },
+    {
+      "route": "pages/detail/index",
+      "activeDraftId": "45651e47-695c-40fc-a9a9-01ee3cef3d43",
+      "sourceHtml": ".superdesign/tmp/detail.html"
+    },
+    {
+      "route": "pages/favorites/index",
+      "activeDraftId": "5fbc70ee-a294-4565-b8ee-8ae8c8b46080",
+      "sourceHtml": ".superdesign/tmp/favorites.html"
+    },
+    {
+      "route": "pages/meal-plan/index",
+      "activeDraftId": "a0d562ac-fa41-447d-99d7-942fbe6fe0e0",
+      "sourceHtml": ".superdesign/tmp/mealplan.html"
+    },
+    {
+      "route": "pages/privacy/index",
+      "activeDraftId": "fe6f9e52-2dad-461c-a0b9-b076ac16b2c6",
+      "sourceHtml": ".superdesign/tmp/privacy.html"
+    },
+    {
+      "route": "pages/online-detail/index",
+      "activeDraftId": "e33e31cc-0771-4560-9e68-9ae572bf0b32",
+      "sourceHtml": ".superdesign/tmp/online-detail.html"
+    }
+  ],
+  "credits": "Superdesign 生成额度已用尽; 全部暖橙稿为手写 HTML 经 import-design-draft 导入(零积分)。后续修订继续走 import --into <draftId>, 或充值后用 iterate-design-draft。",
+  "updatedAt": "2026-09-03"
+}

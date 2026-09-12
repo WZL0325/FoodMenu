@@ -1,46 +1,41 @@
-import Taro from '@tarojs/taro';
+import { FAVORITE_STORAGE_KEY } from '@/utils/storageKeys'
 
-const FAVORITE_KEY = 'healthy_recipe_favorites';
+const normalizeIds = (value: unknown): string[] => {
+  if (!Array.isArray(value)) return []
+  return [...new Set(value.filter((id): id is string => typeof id === 'string'))]
+}
 
-/**
- * 读取本地收藏菜谱 ID 列表。
- * 使用本地缓存是为了让首版无需后端即可保留用户收藏状态。
- */
 export const getFavoriteRecipeIds = (): string[] => {
   try {
-    const value = Taro.getStorageSync<string[]>(FAVORITE_KEY);
-    return Array.isArray(value) ? value : [];
+    return normalizeIds(uni.getStorageSync(FAVORITE_STORAGE_KEY))
   } catch (error) {
-    console.error('[Favorites] 读取收藏缓存失败', error);
-    return [];
+    console.error('[Favorites] 读取收藏缓存失败', error)
+    return []
   }
-};
+}
 
-/**
- * 判断指定菜谱是否已经被收藏。
- */
 export const isFavoriteRecipe = (recipeId: string): boolean => {
-  return getFavoriteRecipeIds().includes(recipeId);
-};
+  return getFavoriteRecipeIds().includes(recipeId)
+}
 
-/**
- * 切换菜谱收藏状态，并返回切换后的收藏状态。
- */
-export const toggleFavoriteRecipe = (recipeId: string): boolean => {
-  const favoriteIds = getFavoriteRecipeIds();
-  const exists = favoriteIds.includes(recipeId);
+export type ToggleFavoriteResult = {
+  favorite: boolean
+  persisted: boolean
+}
 
-  // 如果已收藏，则从收藏列表中移除；否则追加到收藏列表。
+export const toggleFavoriteRecipe = (recipeId: string): ToggleFavoriteResult => {
+  const favoriteIds = getFavoriteRecipeIds()
+  const exists = favoriteIds.includes(recipeId)
   const nextFavoriteIds = exists
     ? favoriteIds.filter((id) => id !== recipeId)
-    : [...favoriteIds, recipeId];
+    : [...favoriteIds, recipeId]
 
   try {
-    Taro.setStorageSync(FAVORITE_KEY, nextFavoriteIds);
-    console.info('[Favorites] 收藏状态已更新', { recipeId, favorite: !exists });
+    uni.setStorageSync(FAVORITE_STORAGE_KEY, nextFavoriteIds)
+    console.info('[Favorites] 收藏状态已更新', { recipeId, favorite: !exists })
+    return { favorite: !exists, persisted: true }
   } catch (error) {
-    console.error('[Favorites] 写入收藏缓存失败', error);
+    console.error('[Favorites] 写入收藏缓存失败', error)
+    return { favorite: exists, persisted: false }
   }
-
-  return !exists;
-};
+}

@@ -35,10 +35,26 @@ export interface Recipe {
   steps: RecipeStep[];
 }
 
+export interface RecipeIngredientMatch {
+  recipe: Recipe;
+  matchedIngredients: string[];
+  missingIngredients: string[];
+  score: number;
+}
+
+export interface DietaryProfile {
+  healthGroup?: HealthGroup;
+  excludedIngredients: string[];
+}
+
+export type IngredientType = 'vegetable' | 'meat' | 'eggSoy' | 'seafood' | 'staple' | 'fungi' | 'fruit' | 'seasoning';
+
 export interface IngredientOption {
   id: string;
   name: string;
-  type: 'vegetable' | 'meat' | 'other';
+  type: IngredientType;
+  common?: boolean;
+  keywords?: string[];
 }
 
 export interface HealthProfile {

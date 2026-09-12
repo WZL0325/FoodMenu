@@ -1,79 +1,101 @@
-// 必须转发和使用 theme.scss
-@forward './theme.scss';
-@use './theme.scss' as *;
+// 暖橙食欲系：品牌橙用于交互，绿与蓝保留给健康状态和在线内容。
+$color-primary: #ed6a3c;
+$color-primary-light: #f5924e;
+$color-primary-dark: #b74724;
+$color-success: #4c8b5e;
+$color-warning: #c15b2d;
+$color-error: #d34f43;
+$color-info: #4a7fb5;
 
-// ============================================
-// 全局 SCSS 变量（建议直接复用，如有特殊设计需求可按需修改）
-// ============================================
+$color-bg-page: #faf1e6;
+$color-bg-card: #ffffff;
+$color-bg-hover: #fff3e4;
 
-// 屏幕适配（设计稿基准 750rpx）
-$screen-width: 750rpx;
-$page-padding: 32rpx; // 页面左右安全边距
-$page-spacing: 32rpx;
-$max-content-width: 686rpx; // 750 - 32*2，内容最大宽度
+$color-text-primary: #2b2018;
+$color-text-secondary: #7c695b;
+$color-text-tertiary: #8a7a6d;
+$color-text-disabled: #b5a899;
+$color-text-white: #ffffff;
 
-// 间距（8px 网格系统）
+$color-border: #f0dfd0;
+$color-divider: #f5eade;
+$color-rule: #e7cbb5;
+
+$color-primary-alpha-06: rgba(237, 106, 60, 0.06);
+$color-primary-alpha-08: rgba(237, 106, 60, 0.08);
+$color-primary-alpha-10: rgba(237, 106, 60, 0.1);
+$color-primary-alpha-12: rgba(237, 106, 60, 0.12);
+$color-primary-light-alpha-10: rgba(245, 146, 78, 0.1);
+$color-primary-light-alpha-12: rgba(245, 146, 78, 0.12);
+$color-warning-alpha-07: rgba(193, 91, 45, 0.07);
+$color-warning-alpha-10: rgba(193, 91, 45, 0.1);
+$color-error-alpha-07: rgba(211, 79, 67, 0.07);
+$color-error-alpha-10: rgba(211, 79, 67, 0.1);
+$color-info-alpha-05: rgba(74, 127, 181, 0.05);
+$color-info-alpha-07: rgba(74, 127, 181, 0.07);
+$color-info-alpha-08: rgba(74, 127, 181, 0.08);
+$color-info-alpha-16: rgba(74, 127, 181, 0.16);
+$color-scrim: rgba(43, 32, 24, 0.45);
+$gradient-primary: linear-gradient(110deg, #f5924e, #ea5f33);
+
 $spacing-xs: 8rpx;
 $spacing-sm: 16rpx;
 $spacing-md: 24rpx;
 $spacing-lg: 32rpx;
 $spacing-xl: 48rpx;
+$spacing-2xl: 64rpx;
 
-// 圆角（语义化）
-$radius-xs: 4rpx; // 小元素：标签、徽章
-$radius-sm: 8rpx; // 卡片内小元素
-$radius-md: 12rpx; // 常规卡片
-$radius-lg: 16rpx; // 大卡片
-$radius-xl: 20rpx; // 特大卡片
-$radius-button: 48rpx; // 按钮专用（全圆角，符合主流小程序）
-$radius-round: 999rpx; // 完全圆形
+$radius-xs: 8rpx;
+$radius-sm: 16rpx;
+$radius-md: 24rpx;
+$radius-lg: 32rpx;
+$radius-xl: 40rpx;
+$radius-button: 999rpx;
+$radius-round: 999rpx;
 
-// 按钮高度（新增）
-$button-height-sm: 64rpx; // 小按钮（次要操作）
-$button-height-md: 80rpx; // 常规按钮（主流标准）
-$button-height-lg: 96rpx; // 大按钮（主要操作、底部固定）
+$button-height-sm: 72rpx;
+$button-height-md: 88rpx;
+$button-height-lg: 96rpx;
 
-// 阴影（语义化）
-$shadow-card: 0 2rpx 12rpx rgba(0, 0, 0, 0.08); // 卡片阴影
-$shadow-card-hover: 0 4rpx 20rpx rgba(0, 0, 0, 0.12); // 卡片悬浮
-$shadow-float: 0 4rpx 16rpx rgba(0, 0, 0, 0.1); // 浮层阴影（如筛选栏、底部操作栏）
-$shadow-popup: 0 8rpx 32rpx rgba(0, 0, 0, 0.15); // 弹窗阴影
+$shadow-card: 0 8rpx 28rpx rgba(184, 96, 47, 0.06);
+$shadow-card-hover: 0 12rpx 32rpx rgba(184, 96, 47, 0.1);
+$shadow-float: 0 8rpx 32rpx rgba(184, 96, 47, 0.14);
+$shadow-popup: 0 -12rpx 48rpx rgba(76, 43, 24, 0.12);
 
-// 字体大小
 $font-size-xs: 22rpx;
 $font-size-sm: 24rpx;
 $font-size-md: 28rpx;
 $font-size-lg: 32rpx;
 $font-size-xl: 36rpx;
 $font-size-xxl: 40rpx;
+$font-size-hero: 60rpx;
 
-// 行高
 $line-height-tight: 1.3;
 $line-height-normal: 1.5;
 $line-height-loose: 1.8;
 
-// 字重
 $font-weight-normal: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
 
-// 过渡动画
+$font-family-sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+$font-family-serif: $font-family-sans;
+
 $transition-fast: 0.15s ease;
 $transition-base: 0.25s ease;
 $transition-slow: 0.35s ease;
+$ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+$ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+$transition-spring: 0.3s $ease-spring;
+$transition-slide: 0.32s $ease-out-expo;
 
-// ============================================
-// 常用 Mixin
-// ============================================
-// 单行文本省略
 @mixin text-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-// 多行文本省略
 @mixin text-ellipsis-multi($lines: 2) {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -82,49 +104,63 @@ $transition-slow: 0.35s ease;
   text-overflow: ellipsis;
 }
 
-// 清除浮动
-@mixin clearfix {
-  &::after {
-    content: '';
-    display: table;
-    clear: both;
-  }
-}
-
-// 水平垂直居中
 @mixin flex-center {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-// 横向滚动容器（微信小程序兼容）
 @mixin scroll-x-container {
   white-space: nowrap;
 }
 
-// 横向滚动子项（微信小程序兼容，必须配合 scroll-x-container 使用）
 @mixin scroll-x-item($width) {
   display: inline-block;
   width: $width;
   vertical-align: top;
-  white-space: normal; // 恢复子项内部换行
+  white-space: normal;
 }
 
-// Button 样式重置与保护
-// 使用方法：@include button-reset;
 @mixin button-reset {
   padding: 0;
   margin: 0;
   line-height: normal;
   text-align: inherit;
-  white-space: nowrap; // 强制不换行
+  white-space: nowrap;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box; // 关键：确保 padding 和 border 不会撑大尺寸
+  box-sizing: border-box;
 
-  &::after {
-    border: none;
-  }
+  &::after { border: none; }
+}
+
+@mixin press {
+  transition: transform $transition-fast, opacity $transition-fast;
+  &:active { transform: scale(0.97); }
+}
+
+@mixin rise($name: rise) {
+  animation: $name 0.25s ease-out both;
+}
+
+@keyframes rise {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
