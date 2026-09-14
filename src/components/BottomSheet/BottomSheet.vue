@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, ref } from 'vue'
+import { onBeforeUnmount, watch, ref } from 'vue'
 import AppIcon from '@/components/AppIcon/AppIcon.vue'
 
 const props = withDefaults(defineProps<{
@@ -16,24 +16,33 @@ const emit = defineEmits<{
 // 双状态 class 实现进出场动画:v-if 移除前先过渡到 leave 态
 const rendered = ref(props.visible)
 const leaving = ref(false)
+let leaveTimer: ReturnType<typeof setTimeout> | undefined
+const clearLeaveTimer = () => {
+  if (!leaveTimer) return
+  clearTimeout(leaveTimer)
+  leaveTimer = undefined
+}
 watch(() => props.visible, (visible) => {
+  clearLeaveTimer()
   if (visible) {
     leaving.value = false
     rendered.value = true
   } else if (rendered.value) {
     leaving.value = true
-    setTimeout(() => {
+    leaveTimer = setTimeout(() => {
       rendered.value = false
       leaving.value = false
+      leaveTimer = undefined
     }, 280)
   }
 })
+onBeforeUnmount(clearLeaveTimer)
 const handleMaskTap = () => emit('close')
 </script>
 
 <template>
-  <view v-if="rendered" class="sheetRoot" :class="{ sheetLeaving: leaving }" @tap="handleMaskTap" @touchmove.stop.prevent>
-    <view class="sheetMask" />
+  <view v-if="rendered" class="sheetRoot" :class="{ sheetLeaving: leaving }" @tap="handleMaskTap">
+    <view class="sheetMask" @touchmove.stop.prevent />
     <view class="sheetPanel" :class="{ sheetPanelLeaving: leaving }" @tap.stop>
       <view class="sheetGrabber" />
       <view v-if="title" class="sheetHeader">
@@ -42,7 +51,9 @@ const handleMaskTap = () => emit('close')
           <AppIcon name="x" :size="32" color="#7C695B" />
         </view>
       </view>
-      <slot />
+      <scroll-view scroll-y class="sheetContent">
+        <slot />
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -71,8 +82,8 @@ const handleMaskTap = () => emit('close')
   right: 0;
   bottom: 0;
   max-height: 78vh;
-  overflow: hidden auto;
-  padding: 16rpx $spacing-lg calc(env(safe-area-inset-bottom) + $spacing-lg);
+  overflow: hidden;
+  padding: 16rpx $spacing-lg 0;
   background: $color-bg-card;
   border-radius: $radius-xl $radius-xl 0 0;
   box-shadow: $shadow-popup;
@@ -86,6 +97,12 @@ const handleMaskTap = () => emit('close')
 @keyframes slideDown {
   from { transform: translateY(0); }
   to { transform: translateY(100%); }
+}
+
+.sheetContent {
+  height: calc(78vh - 64rpx);
+  padding-bottom: calc(env(safe-area-inset-bottom) + $spacing-lg);
+  box-sizing: border-box;
 }
 
 .sheetGrabber {

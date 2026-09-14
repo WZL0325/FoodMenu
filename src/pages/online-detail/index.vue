@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
+import { onLoad } from '@dcloudio/uni-app'
 import SectionHeader from '@/components/SectionHeader/SectionHeader.vue'
 import AppIcon from '@/components/AppIcon/AppIcon.vue'
 import Callout from '@/components/Callout/Callout.vue'
@@ -14,11 +14,6 @@ onLoad((options) => {
   const id = typeof options?.id === 'string' ? options.id : ''
   recipe.value = id ? getShowApiRecipe(id) : undefined
 })
-
-onShareAppMessage(() => ({
-  title: recipe.value ? `${recipe.value.name} - 今天吃啥` : '今天吃啥 - 按食材找菜谱',
-  path: '/pages/index/index',
-}))
 
 const categoryText = computed(() => {
   if (!recipe.value) return ''
@@ -48,15 +43,12 @@ const goHome = () => uni.switchTab({ url: '/pages/index/index' })
       <text class="categoryLabel">{{ categoryText }}</text>
       <view class="titleRow">
         <text class="title">{{ recipe.name }}</text>
-        <button class="shareBtn" open-type="share">
-          <AppIcon name="share-2" :size="28" color="#4A7FB5" />
-          <text>分享</text>
-        </button>
+        <text class="localOnlyBadge">仅本机缓存</text>
       </view>
       <text v-if="recipe.description" class="description">{{ recipe.description }}</text>
 
       <Callout tone="info">
-        <text class="sourceNoticeText">该内容来自 ShowAPI 在线菜谱库，仅展示原料与做法；未提供可靠营养数据，不参与健康人群推荐。</text>
+        <text class="sourceNoticeText">该内容来自 ShowAPI 在线菜谱库，仅展示原料与做法；未提供可靠营养数据，不参与健康人群推荐。在线结果只保存在本机，不支持跨设备分享。</text>
       </Callout>
 
       <view class="section">
@@ -158,18 +150,13 @@ const goHome = () => uni.switchTab({ url: '/pages/index/index' })
   font-weight: $font-weight-bold;
   line-height: $line-height-tight;
 }
-.shareBtn {
-  @include button-reset;
-  @include press;
-  gap: 8rpx;
-  width: 124rpx;
-  height: 64rpx;
+.localOnlyBadge {
+  flex-shrink: 0;
+  padding: 8rpx 14rpx;
   color: $color-info;
   font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
   background: $color-info-alpha-08;
   border-radius: $radius-button;
-  flex-shrink: 0;
 }
 .description { margin-top: $spacing-md; color: $color-text-secondary; font-size: $font-size-sm; line-height: $line-height-loose; }
 

@@ -4,6 +4,8 @@ import {
   filterRecipesByIngredients,
   filterRecipesByHealthGroup,
   filterRecipesByExcludedIngredients,
+  filterRecipesByDietaryProfile,
+  getRecipeDietaryRisk,
   getRecipeExcludedIngredients,
   rankRecipesByIngredients,
 } from './recipeFilters';
@@ -102,6 +104,43 @@ describe('recipe feedback ranking', () => {
 });
 
 describe('dietary exclusions', () => {
+  it('支持食材别名匹配，但不会把葱误判为洋葱', () => {
+    const aliasRecipe = { ...recipes[0], ingredients: ['小葱'] }
+    const onionRecipe = { ...recipes[0], ingredients: ['洋葱'] }
+    expect(getRecipeExcludedIngredients(aliasRecipe, ['葱'])).toEqual(['葱'])
+    expect(getRecipeExcludedIngredients(onionRecipe, ['葱'])).toEqual([])
+    expect(getRecipeExcludedIngredients(aliasRecipe, ['西红柿'])).toEqual([])
+  })
+
+  it('按饮食档案排除忌口并返回健康目标冲突', () => {
+    const recipe = { ...recipes[0], avoidGroups: ['健身人群'] as import('@/types/recipe').HealthGroup[] }
+    const profile = {
+      healthGroup: '健身人群' as const,
+      excludedIngredients: ['鸡肉'],
+    }
+    const risk = getRecipeDietaryRisk(recipe, profile)
+
+    expect(risk.excludedIngredients).toEqual(['鸡肉'])
+    expect(risk.healthGroupConflict).toBe(true)
+    expect(filterRecipesByDietaryProfile([recipe], profile)).toEqual([])
+  })
+
+  it('不在健康目标适宜范围内的菜谱会标记提醒，但不会硬过滤', () => {
+    const recipe = {
+      ...recipes[0],
+      suitableGroups: ['白领轻食'] as import('@/types/recipe').HealthGroup[],
+      avoidGroups: [] as import('@/types/recipe').HealthGroup[],
+    }
+    const profile = { healthGroup: '健身人群' as const, excludedIngredients: [] }
+
+    expect(getRecipeDietaryRisk(recipe, profile).healthGroupConflict).toBe(true)
+    expect(filterRecipesByDietaryProfile([recipe], profile)).toEqual([recipe])
+  })
+
+  it('没有健康目标或忌口时保留全部菜谱', () => {
+    expect(filterRecipesByDietaryProfile(recipes, { excludedIngredients: [] })).toEqual(recipes)
+  })
+
   it('排除包含忌口食材的菜谱', () => {
     const result = filterRecipesByExcludedIngredients(recipes, ['鸡蛋']);
 

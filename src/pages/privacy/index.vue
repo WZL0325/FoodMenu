@@ -56,7 +56,7 @@ const goBack = () => uni.navigateBack()
 </template>
 
 <style lang="scss" scoped>
-.page { min-height: 100vh; padding: $spacing-lg $spacing-lg 80rpx; background: $color-bg-page; }
+.page { min-height: 100vh; padding: $spacing-lg $spacing-lg calc(160rpx + env(safe-area-inset-bottom)); background: $color-bg-page; }
 
 .intro { @include rise; padding: $spacing-md 0 $spacing-xl; border-bottom: 2rpx solid $color-rule; }
 .eyebrow, .title, .updated, .summary, .sectionIndex, .sectionTitle, .paragraph { display: block; }
@@ -112,8 +112,7 @@ const goBack = () => uni.navigateBack()
   font-size: $font-size-xs;
   line-height: $line-height-loose;
   background: $color-info-alpha-05;
-  border-left: 4rpx solid $color-info;
-  border-radius: $radius-sm;
+  border-radius: $radius-md;
 }
 .backButton {
   @include button-reset;

@@ -1,5 +1,10 @@
 export type MealType = 'breakfast' | 'lunch' | 'dinner'
 
+export interface PlanTarget {
+  date: string
+  meal: MealType
+}
+
 export interface MealPlanEntry {
   date: string
   meal: MealType

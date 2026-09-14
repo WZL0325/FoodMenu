@@ -1,11 +1,44 @@
-import type { HealthGroup, Recipe, RecipeIngredientMatch } from '@/types/recipe';
+import { ingredientOptions } from '@/data/ingredients';
+import type { DietaryProfile, HealthGroup, Recipe, RecipeIngredientMatch } from '@/types/recipe';
 import type { RecipeFeedbackMap } from '@/types/recipeFeedback';
 import { filterRecipesByFeedback, getRecipeFeedbackPenalty, sortRecipesByFeedback } from '@/utils/recipeFeedback';
 
 const unique = (items: string[]): string[] => [...new Set(items)];
 
+const ingredientAliasMap = new Map<string, string>();
+ingredientOptions.forEach((option) => {
+  const canonical = option.name.trim();
+  [option.name, ...(option.keywords ?? [])].forEach((value) => {
+    ingredientAliasMap.set(value.trim().toLocaleLowerCase(), canonical);
+  });
+});
+
+const canonicalizeIngredient = (value: string): string => {
+  const normalized = value.trim();
+  return ingredientAliasMap.get(normalized.toLocaleLowerCase()) ?? normalized;
+};
+
+const ingredientKey = (value: string): string => canonicalizeIngredient(value).toLocaleLowerCase();
+
 const getRecipeIngredients = (recipe: Recipe): string[] => {
   return unique([...recipe.ingredients, ...recipe.meatTypes, ...recipe.vegetableTypes]);
+};
+
+export interface RecipeDietaryRisk {
+  excludedIngredients: string[];
+  healthGroupConflict: boolean;
+  hasConflict: boolean;
+}
+
+export const getIngredientConflicts = (
+  recipeIngredients: string[],
+  excludedIngredients: string[],
+): string[] => {
+  const recipeKeys = new Set(recipeIngredients.map(ingredientKey));
+  return unique(excludedIngredients
+    .map((ingredient) => ingredient.trim())
+    .filter(Boolean)
+    .filter((ingredient) => recipeKeys.has(ingredientKey(ingredient))));
 };
 
 /**
@@ -27,9 +60,10 @@ export const filterRecipesByIngredients = (recipes: Recipe[], selectedIngredient
     return recipes;
   }
 
+  const selectedKeys = new Set(selectedIngredients.map(ingredientKey));
   return recipes.filter((recipe) => {
-    const allIngredients = [...recipe.ingredients, ...recipe.meatTypes, ...recipe.vegetableTypes];
-    return selectedIngredients.some((ingredient) => allIngredients.includes(ingredient));
+    const recipeKeys = new Set(getRecipeIngredients(recipe).map(ingredientKey));
+    return [...selectedKeys].some((ingredient) => recipeKeys.has(ingredient));
   });
 };
 
@@ -40,22 +74,36 @@ export const filterRecipesByExcludedIngredients = (
   recipes: Recipe[],
   excludedIngredients: string[],
 ): Recipe[] => {
-  const excluded = unique(excludedIngredients);
-  if (excluded.length === 0) return recipes;
+  if (excludedIngredients.length === 0) return recipes;
 
-  return recipes.filter((recipe) => {
-    const recipeIngredients = getRecipeIngredients(recipe);
-    return excluded.every((ingredient) => !recipeIngredients.includes(ingredient));
-  });
+  return recipes.filter((recipe) => getIngredientConflicts(getRecipeIngredients(recipe), excludedIngredients).length === 0);
 };
 
 export const getRecipeExcludedIngredients = (
   recipe: Recipe,
   excludedIngredients: string[],
-): string[] => {
-  const recipeIngredients = getRecipeIngredients(recipe);
-  return unique(excludedIngredients).filter((ingredient) => recipeIngredients.includes(ingredient));
+): string[] => getIngredientConflicts(getRecipeIngredients(recipe), excludedIngredients);
+
+export const getRecipeDietaryRisk = (
+  recipe: Recipe,
+  profile: DietaryProfile,
+): RecipeDietaryRisk => {
+  const excludedConflicts = getRecipeExcludedIngredients(recipe, profile.excludedIngredients);
+  const healthGroup = profile.healthGroup;
+  const healthGroupConflict = healthGroup
+    ? recipe.avoidGroups.includes(healthGroup) || !recipe.suitableGroups.includes(healthGroup)
+    : false;
+  return {
+    excludedIngredients: excludedConflicts,
+    healthGroupConflict,
+    hasConflict: excludedConflicts.length > 0 || healthGroupConflict,
+  };
 };
+
+export const filterRecipesByDietaryProfile = (
+  recipes: Recipe[],
+  profile: DietaryProfile,
+): Recipe[] => filterRecipesByExcludedIngredients(recipes, profile.excludedIngredients);
 
 /**
  * 按用户已有食材计算匹配度，用于给出可解释的推荐排序。
@@ -80,8 +128,10 @@ export const rankRecipesByIngredients = (
   return availableRecipes
     .map((recipe) => {
       const recipeIngredients = getRecipeIngredients(recipe);
-      const matchedIngredients = selected.filter((ingredient) => recipeIngredients.includes(ingredient));
-      const missingIngredients = recipe.ingredients.filter((ingredient) => !selected.includes(ingredient));
+      const recipeKeys = new Set(recipeIngredients.map(ingredientKey));
+      const selectedKeys = new Set(selected.map(ingredientKey));
+      const matchedIngredients = selected.filter((ingredient) => recipeKeys.has(ingredientKey(ingredient)));
+      const missingIngredients = recipe.ingredients.filter((ingredient) => !selectedKeys.has(ingredientKey(ingredient)));
       const selectedCoverage = matchedIngredients.length / selected.length;
       const recipeCoverage = matchedIngredients.length / recipeIngredients.length;
 
