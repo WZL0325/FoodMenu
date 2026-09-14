@@ -43,5 +43,10 @@
     "ignore": [],
     "include": []
   },
-  "editorSetting": {}
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  },
+  "libVersion": "3.17.0",
+  "srcMiniprogramRoot": "dist/dev/mp-weixin/"
 }
