@@ -107,6 +107,11 @@ export const validateRecipeData = (
       if (!step.description.trim()) addIssue(issues, recipeId, `steps.${index}.description`, '步骤描述不能为空')
     })
     if (!recipe.tips.trim()) addIssue(issues, recipeId, 'tips', '小贴士不能为空')
+    if (recipe.category === '婴儿辅食') {
+      if (!recipe.ageRange?.trim()) addIssue(issues, recipeId, 'ageRange', '婴儿辅食必须标注适用月龄')
+      if (!Array.isArray(recipe.allergens)) addIssue(issues, recipeId, 'allergens', '婴儿辅食必须标注常见过敏原或无已知过敏原')
+      if (!recipe.servingNote?.trim()) addIssue(issues, recipeId, 'servingNote', '婴儿辅食必须标注食用说明')
+    }
   })
 
   return issues

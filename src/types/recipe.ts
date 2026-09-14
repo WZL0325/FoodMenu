@@ -33,6 +33,9 @@ export interface Recipe {
   nutrition: RecipeNutrition;
   tips: string;
   steps: RecipeStep[];
+  allergens?: string[];
+  ageRange?: string;
+  servingNote?: string;
 }
 
 export interface RecipeIngredientMatch {
