@@ -4,7 +4,7 @@ import { onLoad, onShow, onShareAppMessage } from '@dcloudio/uni-app'
 import { recipes } from '@/data/recipes'
 import { healthProfiles } from '@/data/healthProfiles'
 import { findRecipeById } from '@/utils/recipeFilters'
-import { getRecipeExcludedIngredients } from '@/utils/recipeFilters'
+import { getRecipeDietaryRisk } from '@/utils/recipeFilters'
 import { getDietaryProfile } from '@/utils/dietaryProfile'
 import { isFavoriteRecipe, toggleFavoriteRecipe } from '@/utils/favorites'
 import { getRecipeFeedback, toggleRecipeFeedback } from '@/utils/recipeFeedback'
@@ -16,7 +16,11 @@ import {
   saveMealPlanEntries,
   upsertMealPlanEntry,
 } from '@/utils/mealPlan'
-import { setPendingRecommendGroup } from '@/utils/recommendHandoff'
+import {
+  consumePendingPlanTarget,
+  peekPendingPlanTarget,
+  setPendingRecommendGroup,
+} from '@/utils/recommendHandoff'
 import type { DietaryProfile, HealthGroup } from '@/types/recipe'
 import type { RecipeFeedbackKind, RecipeFeedbackRecord } from '@/types/recipeFeedback'
 import type { MealType } from '@/types/mealPlan'
@@ -49,7 +53,13 @@ const refreshWeekDays = () => {
     planDate.value = weekDays.value.find((day) => day.isToday)?.key ?? weekDays.value[0].key
   }
 }
-onShow(refreshWeekDays)
+onShow(() => {
+  refreshWeekDays()
+  if (!recipeId.value) return
+  favorite.value = isFavoriteRecipe(recipeId.value)
+  dietaryProfile.value = getDietaryProfile()
+  feedback.value = getRecipeFeedback(recipeId.value)
+})
 
 onLoad((options) => {
   const id = typeof options?.id === 'string' ? options.id : undefined
@@ -57,12 +67,27 @@ onLoad((options) => {
   favorite.value = id ? isFavoriteRecipe(id) : false
   dietaryProfile.value = getDietaryProfile()
   feedback.value = id ? getRecipeFeedback(id) : feedback.value
+  const pendingTarget = peekPendingPlanTarget()
+  if (pendingTarget) {
+    planDate.value = pendingTarget.date
+    planMeal.value = pendingTarget.meal
+  }
 })
 
 const recipe = computed(() => recipeId.value ? findRecipeById(recipes, recipeId.value) : undefined)
-const excludedConflicts = computed(() => recipe.value
-  ? getRecipeExcludedIngredients(recipe.value, dietaryProfile.value.excludedIngredients)
-  : [])
+const dietaryRisk = computed(() => recipe.value
+  ? getRecipeDietaryRisk(recipe.value, dietaryProfile.value)
+  : { excludedIngredients: [], healthGroupConflict: false, hasConflict: false })
+const safetyInfo = computed(() => {
+  const item = recipe.value
+  if (!item) return []
+  const entries: { label: string, value: string }[] = []
+  if (item.ageRange) entries.push({ label: '适用月龄', value: item.ageRange })
+  if (item.allergens?.length) entries.push({ label: '常见过敏原', value: item.allergens.join('、') })
+  else if (Array.isArray(item.allergens)) entries.push({ label: '常见过敏原', value: '无已知过敏原' })
+  if (item.servingNote) entries.push({ label: '食用说明', value: item.servingNote })
+  return entries
+})
 onShareAppMessage(() => ({
   title: recipe.value ? `${recipe.value.title} - 今天吃啥` : '今天吃啥 - 健康菜谱推荐',
   path: recipe.value ? `/pages/detail/index?id=${encodeURIComponent(recipe.value.id)}` : '/pages/index/index',
@@ -94,6 +119,22 @@ const openPlanDialog = () => {
 const closePlanDialog = () => { planDialogVisible.value = false }
 const saveToPlan = async () => {
   if (!recipe.value || planSaving.value) return
+  if (dietaryRisk.value.hasConflict) {
+    const confirmed = await new Promise<boolean>((resolve) => {
+      uni.showModal({
+        title: '确认加入有提醒的菜谱？',
+        content: dietaryRisk.value.excludedIngredients.length
+          ? `包含忌口食材：${dietaryRisk.value.excludedIngredients.join('、')}。请确认你了解相关风险。`
+          : '这道菜不在当前健康目标的适宜范围内，请确认你了解相关风险。',
+        confirmText: '仍要加入',
+        cancelText: '先不加入',
+        confirmColor: '#C83D2C',
+        success: ({ confirm }) => resolve(confirm),
+        fail: () => resolve(false),
+      })
+    })
+    if (!confirmed) return
+  }
   const selectedDate = planDate.value
   refreshWeekDays()
   if (selectedDate !== planDate.value) {
@@ -117,7 +158,7 @@ const saveToPlan = async () => {
           content: `${dayLabel} ${mealLabel}已安排「${previousTitle}」，确定替换为「${selectedRecipeTitle}」吗？`,
           confirmText: '确认替换',
           cancelText: '保留原菜',
-          confirmColor: '#ED6A3C',
+          confirmColor: '#C83D2C',
           success: (result) => resolve(result.confirm),
           fail: () => resolve(false),
         })
@@ -136,6 +177,7 @@ const saveToPlan = async () => {
       uni.showToast({ title: '计划保存失败', icon: 'none' })
       return
     }
+    consumePendingPlanTarget()
     closePlanDialog()
     uni.showToast({ title: '已加入本周计划', icon: 'none' })
   } finally {
@@ -171,7 +213,7 @@ const openMealPlan = () => {
     <view class="coverWrap">
       <image v-if="!imageFailed" class="cover" :src="recipe.image" mode="aspectFill" @error="handleImageError" />
       <view v-else class="cover coverFallback">
-        <AppIcon name="utensils" :size="96" color="#D8B494" />
+        <AppIcon name="utensils" :size="96" color="#E8A48F" />
         <text class="fallbackTitle">{{ recipe.title }}</text>
         <text class="fallbackIngredients">{{ recipe.ingredients.slice(0, 5).join('、') }}</text>
       </view>
@@ -183,41 +225,61 @@ const openMealPlan = () => {
           <text class="title">{{ recipe.title }}</text>
           <view class="titleActions">
             <button class="shareBtn" open-type="share">
-              <AppIcon name="share-2" :size="28" color="#B74724" />
+              <AppIcon name="share-2" :size="28" color="#C83D2C" />
               <text>分享</text>
             </button>
             <button class="favBtn" :class="{ favBtnActive: favorite }" :aria-label="favorite ? '取消收藏' : '收藏'" @tap="handleFavorite">
               <view class="favIcon" :class="{ favIconActive: favorite }">
-                <AppIcon name="heart" :size="36" :color="favorite ? '#FFFFFF' : '#D34F43'" />
+                <AppIcon name="heart" :size="36" :color="favorite ? '#FFFFFF' : '#D94B71'" />
               </view>
             </button>
           </view>
         </view>
         <view class="metaRow">
           <view class="metaItem">
-            <AppIcon name="clock" :size="26" color="#8A7A6D" />
+            <AppIcon name="clock" :size="26" color="#8F8A97" />
             <text>{{ recipe.cookingTime }} 分钟</text>
           </view>
           <view class="metaItem">
-            <AppIcon name="flame" :size="26" color="#8A7A6D" />
+            <AppIcon name="flame" :size="26" color="#8F8A97" />
             <text>{{ recipe.nutrition.calories }} kcal</text>
           </view>
           <view class="metaItem">
-            <AppIcon name="leaf" :size="26" color="#8A7A6D" />
+            <AppIcon name="leaf" :size="26" color="#8F8A97" />
             <text>{{ recipe.difficulty }}</text>
           </view>
         </view>
         <text class="desc">{{ recipe.description }}</text>
       </view>
 
-      <Callout v-if="excludedConflicts.length" tone="error" title="饮食档案提醒">
-        <text class="conflictText">这道菜包含你的忌口食材：{{ excludedConflicts.join('、') }}</text>
+      <view v-if="safetyInfo.length" class="safetyCard">
+        <view class="safetyHead">
+          <AppIcon name="circle-check" :size="30" color="#3D7A4D" />
+          <text class="safetyTitle">食用安全信息</text>
+        </view>
+        <view class="safetyRows">
+          <view v-for="entry in safetyInfo" :key="entry.label" class="safetyRow">
+            <text class="safetyKey">{{ entry.label }}</text>
+            <text class="safetyVal">{{ entry.value }}</text>
+          </view>
+        </view>
+        <text class="safetyNote">首次给婴幼儿尝试新食材时，请少量观察过敏反应。</text>
+      </view>
+
+      <Callout v-if="dietaryRisk.hasConflict" tone="warning" title="饮食档案提醒">
+        <text v-if="dietaryRisk.excludedIngredients.length" class="conflictText">这道菜包含你的忌口食材：{{ dietaryRisk.excludedIngredients.join('、') }}</text>
+        <text v-if="dietaryRisk.healthGroupConflict" class="conflictText">这道菜不在当前健康目标的适宜范围内，请结合专业意见选择。</text>
       </Callout>
 
-      <button class="planButton" @tap="openPlanDialog">
+      <button class="planButton" :class="{ planButtonWarning: dietaryRisk.hasConflict }" @tap="openPlanDialog">
         <AppIcon name="calendar-plus" :size="30" color="#FFFFFF" />
-        <text>加入本周计划</text>
+        <text>{{ dietaryRisk.hasConflict ? '仍要加入计划' : '加入本周计划' }}</text>
       </button>
+
+      <view v-if="dietaryRisk.hasConflict" class="planHint">
+        <AppIcon name="info" :size="24" color="#C15B2D" />
+        <text>加入前会再次确认提醒内容</text>
+      </view>
 
       <view class="feedbackPanel">
         <view class="feedbackHeading">
@@ -251,7 +313,7 @@ const openMealPlan = () => {
       </view>
 
       <view class="section">
-        <SectionHeader index="02" title="营养成分" />
+        <SectionHeader index="02" title="营养成分" subtitle="单份估算值，便于同类菜谱比较" />
         <view class="nutrition">
           <view v-for="item in nutritionItems" :key="item.label" class="nutritionRow">
             <text class="nutritionLabel">{{ item.label }}</text>
@@ -261,7 +323,7 @@ const openMealPlan = () => {
             <text class="nutritionValue">{{ item.value }}<text class="nutritionUnit">{{ item.unit }}</text></text>
           </view>
         </view>
-        <text class="estimateNote">营养数据为单份估算值，仅供膳食参考</text>
+        <text class="estimateNote">单份估算值，仅用于菜谱间比较，不代表每日建议摄入量，也不构成医学建议</text>
       </view>
 
       <view v-if="recipe.suitableGroups.length" class="section">
@@ -365,7 +427,7 @@ const openMealPlan = () => {
 .categoryLabel {
   display: block;
   margin-bottom: $spacing-xs;
-  color: $color-warning;
+  color: $color-primary;
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
   letter-spacing: 0.28em;
@@ -428,6 +490,20 @@ const openMealPlan = () => {
 
 .desc { display: block; margin-top: $spacing-md; color: $color-text-secondary; font-size: $font-size-sm; line-height: $line-height-loose; }
 
+.safetyCard {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background: $color-green-light;
+  border-radius: $radius-lg;
+}
+.safetyHead { display: flex; align-items: center; gap: $spacing-xs; }
+.safetyTitle { color: #3D7A4D; font-size: $font-size-sm; font-weight: $font-weight-semibold; }
+.safetyRows { margin-top: $spacing-sm; }
+.safetyRow { display: flex; gap: $spacing-sm; padding: 6rpx 0; }
+.safetyKey { flex-shrink: 0; color: #3D7A4D; font-size: $font-size-xs; font-weight: $font-weight-medium; }
+.safetyVal { flex: 1; min-width: 0; color: $color-text-secondary; font-size: $font-size-xs; line-height: $line-height-normal; }
+.safetyNote { display: block; margin-top: $spacing-xs; color: $color-text-tertiary; font-size: $font-size-xs; line-height: $line-height-normal; }
+
 .conflictText { color: $color-error; font-size: $font-size-sm; line-height: $line-height-normal; }
 
 .planButton {
@@ -444,6 +520,8 @@ const openMealPlan = () => {
   border-radius: $radius-button;
 }
 .planButton:active { opacity: 0.9; }
+.planButtonWarning { background: $color-warning; }
+.planHint { display: flex; align-items: center; gap: $spacing-xs; margin-top: $spacing-xs; color: $color-warning; font-size: $font-size-xs; }
 
 .feedbackPanel {
   margin-top: $spacing-md;

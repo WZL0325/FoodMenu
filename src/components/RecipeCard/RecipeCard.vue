@@ -361,7 +361,7 @@ const handleFeedback = (kind: RecipeFeedbackKind) => {
 
 .tagSuccess {
   color: $color-success;
-  background: #E8F3E2;
+  background: $color-green-light;
 }
 
 .tagInfo {
@@ -418,7 +418,7 @@ const handleFeedback = (kind: RecipeFeedbackKind) => {
 
 .feedbackActionCooked {
   color: $color-success;
-  background: #E8F3E2;
+  background: $color-green-light;
   border-color: $color-success;
 }
 

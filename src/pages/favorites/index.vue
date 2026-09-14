@@ -45,7 +45,7 @@ const persistProfile = () => {
     uni.showToast({ title: '饮食档案保存失败', icon: 'none' })
   }
 }
-const selectHealthGroup = (group: HealthGroup) => {
+const selectHealthGroup = (group?: HealthGroup) => {
   dietaryProfile.value = { ...dietaryProfile.value, healthGroup: group }
   persistProfile()
 }
@@ -65,7 +65,7 @@ const confirmClear = (content: string, action: () => boolean, successTitle: stri
     title: '确认清除',
     content,
     confirmText: '清除',
-    confirmColor: '#D34F43',
+    confirmColor: '#D94B71',
     success: ({ confirm }) => {
       if (!confirm) return
 
@@ -124,6 +124,11 @@ const clearAllLocalData = () => confirmClear(
       <text class="fieldLabel">健康目标 / 人群</text>
       <scroll-view scroll-x class="optionScroll">
         <text
+          class="optionTag"
+          :class="{ optionTagActive: !dietaryProfile.healthGroup }"
+          @tap="selectHealthGroup()"
+        >不设置目标</text>
+        <text
           v-for="profile in healthProfiles"
           :key="profile.id"
           class="optionTag"
@@ -141,7 +146,7 @@ const clearAllLocalData = () => confirmClear(
           @tap="toggleRestriction(ingredient)"
         >{{ ingredient }}</text>
       </view>
-      <text class="profileHint">首页和健康推荐会自动避开已选忌口，详情页会提示冲突。</text>
+      <text class="profileHint">明确忌口会在所有入口自动避开；健康目标用于推荐排序和详情页风险提醒。</text>
     </view>
 
     <SectionHeader index="02" title="我的收藏" :subtitle="list.length > 0 ? `共 ${list.length} 道` : undefined" />
@@ -168,7 +173,7 @@ const clearAllLocalData = () => confirmClear(
         <text class="dataDesc">安排早中晚餐，自动汇总需要准备的食材</text>
       </view>
       <view class="rowArrow">
-        <AppIcon name="chevron-right" :size="30" color="#8A7A6D" />
+        <AppIcon name="chevron-right" :size="30" color="#8F8A97" />
       </view>
     </view>
 
@@ -180,7 +185,7 @@ const clearAllLocalData = () => confirmClear(
           <text class="dataDesc">了解本地存储、联网查询和健康信息边界</text>
         </view>
         <view class="rowArrow">
-          <AppIcon name="chevron-right" :size="30" color="#8A7A6D" />
+          <AppIcon name="chevron-right" :size="30" color="#8F8A97" />
         </view>
       </view>
       <view class="dataRow">
@@ -219,7 +224,7 @@ const clearAllLocalData = () => confirmClear(
         <button class="clearButton" @tap="clearFeedback">清除</button>
       </view>
       <button class="clearAllButton" @tap="clearAllLocalData">
-        <AppIcon name="trash-2" :size="28" color="#D34F43" />
+        <AppIcon name="trash-2" :size="28" color="#D94B71" />
         <text>清除全部本地数据</text>
       </button>
     </view>

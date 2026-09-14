@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { healthProfiles } from '@/data/healthProfiles'
 import { recipes } from '@/data/recipes'
-import { filterRecipesByExcludedIngredients, filterRecipesByHealthGroup } from '@/utils/recipeFilters'
+import { filterRecipesByDietaryProfile, filterRecipesByHealthGroup } from '@/utils/recipeFilters'
 import { getDietaryProfile } from '@/utils/dietaryProfile'
 import { consumePendingRecommendGroup } from '@/utils/recommendHandoff'
 import { filterRecipesByFeedback, getRecipeFeedbackMap, sortRecipesByFeedback } from '@/utils/recipeFeedback'
@@ -39,12 +39,12 @@ onShow(() => {
   }
 })
 const profile = computed(() => healthProfiles.find((item) => item.id === group.value) ?? healthProfiles[0])
-const result = computed(() => filterRecipesByExcludedIngredients(
+const result = computed(() => filterRecipesByDietaryProfile(
   sortRecipesByFeedback(
     filterRecipesByFeedback(filterRecipesByHealthGroup(recipes, group.value), feedbackMap.value),
     feedbackMap.value,
   ),
-  dietaryProfile.value.excludedIngredients,
+  { ...dietaryProfile.value, healthGroup: group.value },
 ))
 const selectGroup = (value: HealthGroup) => {
   group.value = value
@@ -74,13 +74,13 @@ const recommendationReason = (recipe: Recipe) => getHealthRecommendationReason(r
     </view>
     <view class="tipCard">
       <view class="tipHead">
-        <view class="tipIcon"><AppIcon name="bell" :size="30" color="#ED6A3C" /></view>
+        <view class="tipIcon"><AppIcon name="bell" :size="30" color="#F45B3C" /></view>
         <text class="tipTitle">{{ profile.title }}饮食提醒</text>
       </view>
       <text class="tipDesc">{{ profile.description }}</text>
       <view class="tipList">
         <view v-for="tip in profile.avoidTips" :key="tip" class="tipItem">
-          <AppIcon name="check" :size="24" color="#ED6A3C" />
+          <AppIcon name="check" :size="24" color="#F45B3C" />
           <text class="tipText">{{ tip }}</text>
         </view>
       </view>
@@ -129,10 +129,11 @@ const recommendationReason = (recipe: Recipe) => getHealthRecommendationReason(r
 }
 .introDesc { margin-top: 12rpx; color: $color-text-secondary; font-size: 26rpx; line-height: $line-height-loose; }
 
-.groupGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: $spacing-sm; }
+.groupGrid { display: flex; flex-wrap: wrap; gap: $spacing-sm; }
 .groupTag {
   @include button-reset;
   @include press;
+  flex: 0 0 calc((100% - 32rpx) / 3);
   min-height: 96rpx;
   padding: 18rpx 8rpx;
   background: $color-bg-card;

@@ -17,9 +17,9 @@ const props = withDefaults(defineProps<{
 
 const toneConfig: Record<CalloutTone, { defaultIcon: string, iconColor: string, bg: string }> = {
   info: { defaultIcon: 'info', iconColor: '#4A7FB5', bg: '#E4F0FA' },
-  success: { defaultIcon: 'circle-check', iconColor: '#4C8B5E', bg: '#E8F3E2' },
+  success: { defaultIcon: 'circle-check', iconColor: '#3D7A4D', bg: '#E4F5DF' },
   warning: { defaultIcon: 'triangle-alert', iconColor: '#C15B2D', bg: '#FFF0DF' },
-  error: { defaultIcon: 'circle-x', iconColor: '#D34F43', bg: '#FCEAE8' },
+  error: { defaultIcon: 'circle-x', iconColor: '#D94B71', bg: '#FFE6ED' },
 }
 const config = toneConfig[props.tone]
 const iconName = props.icon || config.defaultIcon

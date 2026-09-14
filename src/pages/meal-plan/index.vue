@@ -14,6 +14,7 @@ import {
   saveManualShoppingItems,
   saveMealPlanEntries,
 } from '@/utils/mealPlan'
+import { clearPendingPlanTarget, setPendingPlanTarget } from '@/utils/recommendHandoff'
 import type { MealPlanEntry, MealType } from '@/types/mealPlan'
 import AppIcon from '@/components/AppIcon/AppIcon.vue'
 import Callout from '@/components/Callout/Callout.vue'
@@ -26,11 +27,11 @@ const entries = ref<MealPlanEntry[]>([])
 const manualItems = ref<string[]>([])
 const checkedItems = ref<string[]>([])
 const manualInput = ref('')
-const weekDays = getWeekDays()
-const weekDateKeys = new Set(weekDays.map((day) => day.key))
+const weekDays = ref(getWeekDays())
+const weekDateKeys = computed(() => new Set(weekDays.value.map((day) => day.key)))
 const recipeMap = new Map(recipes.map((recipe) => [recipe.id, recipe]))
 
-const currentEntries = computed(() => entries.value.filter((entry) => weekDateKeys.has(entry.date)))
+const currentEntries = computed(() => entries.value.filter((entry) => weekDateKeys.value.has(entry.date)))
 const arrangedCount = computed(() => currentEntries.value.length)
 const shoppingItems = computed(() => buildShoppingList(currentEntries.value, recipes, manualItems.value))
 const purchasedCount = computed(() => shoppingItems.value.filter((item) => checkedItems.value.includes(item.name)).length)
@@ -39,6 +40,7 @@ const shoppingProgress = computed(() => shoppingItems.value.length
   : 0)
 
 onShow(() => {
+  weekDays.value = getWeekDays()
   entries.value = getMealPlanEntries()
   manualItems.value = getManualShoppingItems()
   checkedItems.value = getCheckedShoppingItems()
@@ -56,7 +58,7 @@ const removeEntry = (entry: MealPlanEntry) => {
     title: '移出本周计划',
     content: `确认移除${mealLabel}的“${getRecipeTitle(entry)}”吗？`,
     confirmText: '移除',
-    confirmColor: '#D34F43',
+    confirmColor: '#D94B71',
     success: ({ confirm }) => {
       if (!confirm) return
       const nextEntries = removeMealPlanEntry(entries.value, entry.date, entry.meal)
@@ -69,7 +71,11 @@ const removeEntry = (entry: MealPlanEntry) => {
     },
   })
 }
-const goChooseRecipe = () => uni.switchTab({ url: '/pages/index/index' })
+const goChooseRecipe = (target?: { date: string, meal: MealType }) => {
+  if (target) setPendingPlanTarget(target)
+  else clearPendingPlanTarget()
+  uni.switchTab({ url: '/pages/index/index' })
+}
 const addManualItem = () => {
   const name = manualInput.value.trim()
   if (!name) return
@@ -146,18 +152,18 @@ const clearChecked = () => {
               <text class="plannedTitle">{{ getRecipeTitle(getEntry(day.key, meal.id)) }}</text>
               <text class="plannedMeta">{{ recipeMap.get(getEntry(day.key, meal.id)?.recipeId || '')?.cookingTime || '--' }} 分钟</text>
             </view>
-            <text v-else class="emptyMeal" @tap="goChooseRecipe">去选一道</text>
+            <text v-else class="emptyMeal" @tap="goChooseRecipe({ date: day.key, meal: meal.id })">去选一道</text>
             <view
               v-if="getEntry(day.key, meal.id)"
               class="removeMeal"
               @tap.stop="removeEntry(getEntry(day.key, meal.id)!)"
             >
-              <AppIcon name="x" :size="28" color="#8A7A6D" />
+              <AppIcon name="x" :size="28" color="#8F8A97" />
             </view>
           </view>
         </view>
       </view>
-      <button class="chooseButton" @tap="goChooseRecipe">
+      <button class="chooseButton" @tap="goChooseRecipe()">
         <AppIcon name="utensils" :size="28" color="#FFFFFF" />
         <text>继续选菜</text>
       </button>
@@ -201,7 +207,7 @@ const clearChecked = () => {
             <text class="shoppingMeta">{{ item.manual ? '手动添加' : `用于 ${item.mealCount} 个餐次` }}</text>
           </view>
           <view v-if="item.manual" class="removeShopping" @tap="removeManualItem(item.name)">
-            <AppIcon name="trash-2" :size="28" color="#8A7A6D" />
+            <AppIcon name="trash-2" :size="28" color="#8F8A97" />
           </view>
         </view>
       </view>
@@ -210,7 +216,7 @@ const clearChecked = () => {
         icon="shopping-basket"
         description="购物清单还是空的，先把菜谱加入本周计划，所需食材会自动汇总到这里。"
         action-text="去选菜"
-        @action="goChooseRecipe"
+        @action="goChooseRecipe()"
       />
       <text v-if="checkedItems.length" class="resetAction" @tap="clearChecked">重置全部勾选</text>
       <Callout tone="info">
@@ -221,7 +227,7 @@ const clearChecked = () => {
 </template>
 
 <style lang="scss" scoped>
-.page { min-height: 100vh; padding: $spacing-lg $spacing-lg 80rpx; background: $color-bg-page; }
+.page { min-height: 100vh; padding: $spacing-lg $spacing-lg calc(160rpx + env(safe-area-inset-bottom)); background: $color-bg-page; }
 
 .pageIntro { @include rise; padding: $spacing-md 0 $spacing-lg; }
 .introEyebrow, .introTitle, .introDesc, .summaryTitle, .summaryDesc, .dayTitle, .dayDate, .plannedTitle, .plannedMeta, .shoppingName, .shoppingMeta { display: block; }
