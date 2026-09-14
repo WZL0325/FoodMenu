@@ -10,10 +10,7 @@
     },
     {
       "path": "pages/detail/index",
-      "style": {
-        "navigationBarTitleText": "菜谱详情",
-        "enableShareAppMessage": true
-      }
+      "style": { "navigationBarTitleText": "菜谱详情" }
     },
     {
       "path": "pages/online-detail/index",
