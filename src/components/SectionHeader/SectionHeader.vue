@@ -19,6 +19,7 @@ const emit = defineEmits<{ action: [] }>()
   <view class="sectionHeader">
     <view class="titleGroup">
       <view class="titleRow">
+        <text v-if="index" class="index">{{ index }}</text>
         <view class="marker" />
         <text class="title">{{ title }}</text>
       </view>
@@ -26,7 +27,7 @@ const emit = defineEmits<{ action: [] }>()
     </view>
     <view v-if="actionText" class="action" @tap="emit('action')">
       <text class="actionText">{{ actionText }}</text>
-      <AppIcon name="arrow-right" :size="26" color="#ed6a3c" />
+      <AppIcon name="arrow-right" :size="26" color="#f45b3c" />
     </view>
   </view>
 </template>
@@ -60,6 +61,14 @@ const emit = defineEmits<{ action: [] }>()
   flex-shrink: 0;
   background: $gradient-primary;
   border-radius: 6rpx;
+}
+
+.index {
+  color: $color-primary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
 }
 
 .title {

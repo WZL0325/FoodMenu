@@ -77,7 +77,7 @@ const handleFeedback = (kind: RecipeFeedbackKind) => {
         @error="handleImageError"
       />
       <view v-else class="image imageFallback">
-        <AppIcon name="utensils" :size="64" color="#ED6A3C" />
+        <AppIcon name="utensils" :size="64" color="#F45B3C" />
         <text class="fallbackTitle">{{ recipe.title }}</text>
         <text class="fallbackHint">图片暂不可用，可查看用料与做法</text>
       </view>
@@ -91,17 +91,17 @@ const handleFeedback = (kind: RecipeFeedbackKind) => {
         <text class="category">{{ recipe.category }}</text>
         <view class="meta">
           <view class="metaItem">
-            <AppIcon name="clock" :size="24" color="#8A7A6D" />
+            <AppIcon name="clock" :size="24" color="#8F8A97" />
             <text>{{ recipe.cookingTime }} 分钟</text>
           </view>
           <view class="metaItem">
-            <AppIcon name="flame" :size="24" color="#8A7A6D" />
+            <AppIcon name="flame" :size="24" color="#8F8A97" />
             <text>{{ recipe.nutrition.calories }} kcal</text>
           </view>
         </view>
       </view>
       <text class="title">{{ recipe.title }}</text>
-      <text class="desc">{{ recipe.description }}</text>
+      <text v-if="!compact" class="desc">{{ recipe.description }}</text>
       <view class="tags">
         <text v-for="tag in recipe.healthTags.slice(0, 3)" :key="tag" class="tag" :class="healthTagClass(tag)">{{ tag }}</text>
         <text class="tag tagDifficulty">{{ recipe.difficulty }}</text>
@@ -160,8 +160,6 @@ const handleFeedback = (kind: RecipeFeedbackKind) => {
 }
 
 .compactCard {
-  @include scroll-x-item(320rpx);
-  margin-right: $spacing-md;
   border-radius: $radius-lg;
 }
 
@@ -281,7 +279,7 @@ const handleFeedback = (kind: RecipeFeedbackKind) => {
   font-size: $font-size-xxl;
   font-weight: $font-weight-bold;
   line-height: $line-height-tight;
-  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .desc {
@@ -339,7 +337,7 @@ const handleFeedback = (kind: RecipeFeedbackKind) => {
   flex: 1;
   min-width: 0;
   color: $color-text-secondary;
-  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .matchHave {
@@ -425,7 +423,7 @@ const handleFeedback = (kind: RecipeFeedbackKind) => {
 }
 
 .compactCard .content {
-  padding: $spacing-md;
+  padding: $spacing-md $spacing-lg;
 }
 
 .compactCard .title {
@@ -440,5 +438,9 @@ const handleFeedback = (kind: RecipeFeedbackKind) => {
 
 .compactCard .scoreNum {
   font-size: $font-size-xs;
+}
+
+.compactCard .figure {
+  padding-bottom: 50%;
 }
 </style>

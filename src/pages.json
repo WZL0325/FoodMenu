@@ -17,10 +17,7 @@
     },
     {
       "path": "pages/online-detail/index",
-      "style": {
-        "navigationBarTitleText": "在线菜谱",
-        "enableShareAppMessage": true
-      }
+      "style": { "navigationBarTitleText": "在线菜谱" }
     },
     {
       "path": "pages/favorites/index",
@@ -37,16 +34,16 @@
   ],
   "globalStyle": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#ed6a3c",
+    "navigationBarBackgroundColor": "#f45b3c",
     "navigationBarTitleText": "今天吃啥",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#faf1e6"
+    "backgroundColor": "#fff9f3"
   },
   "tabBar": {
-    "color": "#8a7a6d",
-    "selectedColor": "#ed6a3c",
+    "color": "#8f8a97",
+    "selectedColor": "#f45b3c",
     "backgroundColor": "#ffffff",
-    "borderStyle": "black",
+    "borderStyle": "white",
     "list": [
       {
         "pagePath": "pages/index/index",

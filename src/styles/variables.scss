@@ -1,42 +1,46 @@
-// 暖橙食欲系：品牌橙用于交互，绿与蓝保留给健康状态和在线内容。
-$color-primary: #ed6a3c;
-$color-primary-light: #f5924e;
-$color-primary-dark: #b74724;
-$color-success: #4c8b5e;
+// 活力橙绿：活力橙承担大面积品牌视觉，深橙用于带白字 CTA，草木绿表示健康态，莓果红点缀收藏/灵感。
+$color-primary: #f45b3c;
+$color-primary-light: #f78e73;
+$color-primary-dark: #c83d2c;
+$color-success: #56a968;
 $color-warning: #c15b2d;
-$color-error: #d34f43;
+$color-error: #d94b71;
 $color-info: #4a7fb5;
+$color-green: #56a968;
+$color-green-light: #e4f5df;
+$color-berry: #d94b71;
+$color-berry-light: #ffe6ed;
 
-$color-bg-page: #faf1e6;
+$color-bg-page: #fff9f3;
 $color-bg-card: #ffffff;
-$color-bg-hover: #fff3e4;
+$color-bg-hover: #fff3e8;
 
-$color-text-primary: #2b2018;
-$color-text-secondary: #7c695b;
-$color-text-tertiary: #8a7a6d;
-$color-text-disabled: #b5a899;
+$color-text-primary: #24212a;
+$color-text-secondary: #77737d;
+$color-text-tertiary: #8f8a97;
+$color-text-disabled: #bab5c0;
 $color-text-white: #ffffff;
 
-$color-border: #f0dfd0;
-$color-divider: #f5eade;
-$color-rule: #e7cbb5;
+$color-border: #f0dfd6;
+$color-divider: #f5ece4;
+$color-rule: #eccfc2;
 
-$color-primary-alpha-06: rgba(237, 106, 60, 0.06);
-$color-primary-alpha-08: rgba(237, 106, 60, 0.08);
-$color-primary-alpha-10: rgba(237, 106, 60, 0.1);
-$color-primary-alpha-12: rgba(237, 106, 60, 0.12);
-$color-primary-light-alpha-10: rgba(245, 146, 78, 0.1);
-$color-primary-light-alpha-12: rgba(245, 146, 78, 0.12);
+$color-primary-alpha-06: rgba(244, 91, 60, 0.06);
+$color-primary-alpha-08: rgba(244, 91, 60, 0.08);
+$color-primary-alpha-10: rgba(244, 91, 60, 0.1);
+$color-primary-alpha-12: rgba(244, 91, 60, 0.12);
+$color-primary-light-alpha-10: rgba(247, 142, 115, 0.1);
+$color-primary-light-alpha-12: rgba(247, 142, 115, 0.12);
 $color-warning-alpha-07: rgba(193, 91, 45, 0.07);
 $color-warning-alpha-10: rgba(193, 91, 45, 0.1);
-$color-error-alpha-07: rgba(211, 79, 67, 0.07);
-$color-error-alpha-10: rgba(211, 79, 67, 0.1);
+$color-error-alpha-07: rgba(217, 75, 113, 0.07);
+$color-error-alpha-10: rgba(217, 75, 113, 0.1);
 $color-info-alpha-05: rgba(74, 127, 181, 0.05);
 $color-info-alpha-07: rgba(74, 127, 181, 0.07);
 $color-info-alpha-08: rgba(74, 127, 181, 0.08);
 $color-info-alpha-16: rgba(74, 127, 181, 0.16);
-$color-scrim: rgba(43, 32, 24, 0.45);
-$gradient-primary: linear-gradient(110deg, #f5924e, #ea5f33);
+$color-scrim: rgba(36, 33, 42, 0.45);
+$gradient-primary: linear-gradient(110deg, #f78e73, #f45b3c);
 
 $spacing-xs: 8rpx;
 $spacing-sm: 16rpx;
@@ -57,10 +61,10 @@ $button-height-sm: 72rpx;
 $button-height-md: 88rpx;
 $button-height-lg: 96rpx;
 
-$shadow-card: 0 8rpx 28rpx rgba(184, 96, 47, 0.06);
-$shadow-card-hover: 0 12rpx 32rpx rgba(184, 96, 47, 0.1);
-$shadow-float: 0 8rpx 32rpx rgba(184, 96, 47, 0.14);
-$shadow-popup: 0 -12rpx 48rpx rgba(76, 43, 24, 0.12);
+$shadow-card: 0 8rpx 28rpx rgba(200, 61, 44, 0.06);
+$shadow-card-hover: 0 12rpx 32rpx rgba(200, 61, 44, 0.1);
+$shadow-float: 0 8rpx 32rpx rgba(200, 61, 44, 0.14);
+$shadow-popup: 0 -12rpx 48rpx rgba(36, 33, 42, 0.12);
 
 $font-size-xs: 22rpx;
 $font-size-sm: 24rpx;

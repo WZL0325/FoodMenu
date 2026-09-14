@@ -8,8 +8,8 @@ const TABS = [
   { name: 'me', icon: 'user-round' },
 ]
 const STATES = [
-  { suffix: '', color: '#8A7A6D' },
-  { suffix: '-active', color: '#ED6A3C' },
+  { suffix: '', color: '#8F8A97' },
+  { suffix: '-active', color: '#F45B3C' },
 ]
 
 for (const tab of TABS) {
