@@ -7,7 +7,7 @@
 - 按手头食材筛选菜谱（多选为任意食材命中）
 - 按健康人群查看饮食提醒和推荐菜谱
 - 健康推荐卡片展示基于健康标签的推荐依据
-- 保存本地饮食档案，按健康目标与忌口自动过滤
+- 保存本地饮食档案，明确忌口自动过滤，健康目标用于推荐排序与详情提醒
 - 查看食材匹配度、已有食材和仍需准备的食材
 - 一键随机选择高匹配菜谱
 - 查看菜谱用料、营养、步骤和小贴士
@@ -114,7 +114,7 @@ ShowAPI 当前图片字段已标注“已无”，因此在线菜谱使用无图
 
 ### 菜谱配图与图标
 
-- `src/static/recipes/r001.jpg` ~ `r020.jpg` 为 3:2 统一裁切的菜品图（800×533，平均约 50KB）。**当前图片来自 loremflickr 关键词匹配的演示占位图，正式上线前必须替换为自拍或确认可商用的素材**；替换时保持文件名与尺寸不变即可，无需改代码。
+- `src/static/recipes/r001.jpg` ~ `r030.jpg` 为 3:2 统一的年轻食物插画封面（800×533）。图片由 `node scripts/generate-recipe-illustrations.mjs` 确定性生成（SVG 插画经 Sharp 输出 progressive JPEG），与菜名一一对应、内容哈希唯一；每次改动生成脚本后重新执行即可整体重生成，并通过 `node scripts/verify-recipe-images.mjs` 校验完整性（覆盖 r001–r030、尺寸、唯一性）。如需换成自拍或商用素材，保持文件名与尺寸不变即可，无需改代码。
 - 图标体系统一使用 [Lucide](https://lucide.dev)（ISC 许可）：页面内图标由 `src/components/AppIcon` 以 data-URI SVG 渲染，tabBar 图标由 `node scripts/gen-tabbar.mjs` 从 lucide-static 渲染为 PNG（修改后需重新执行脚本）。
 - 图标源如需扩充，编辑 `scripts/gen-appicon.mjs` 的图标名列表后执行 `node scripts/gen-appicon.mjs` 重新生成。
 - 设计规范：杂志编辑风（纸感米白底、衬线标题、编号章节），全站禁止 emoji 与 Unicode 伪图标字符。
